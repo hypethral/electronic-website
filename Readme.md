@@ -1,7 +1,7 @@
 # flask
 An E-Commerce app built with Python Flask
 
-**Features:**
+**Features:** 
  - Cart, orders, and items feature with proper order processing system
  - Proper user authentication and authorization
  - Stripe Payment Integration
