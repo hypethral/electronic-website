@@ -11,6 +11,8 @@ env:
   ECR_REPOSITORY: estore
   ECS_CLUSTER: fargate-cluster
   ECS_SERVICE: ecr-estore-fargate-service
+  TASK_FAMILY: ecr-estore-fargate
+  CONTAINER_NAME: estore
 
 jobs:
   build-and-deploy:
@@ -40,10 +42,18 @@ jobs:
           docker push $IMAGE_URI
           echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
 
-      - name: Deploy to ECS
+      - name: Render new ECS task definition with new image
+        id: render-task
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.TASK_FAMILY }}
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ env.IMAGE_URI }}
+
+      - name: Deploy new task definition to ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: ecr-estore-fargate                
+          task-definition: ${{ steps.render-task.outputs.task-definition }}
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
-          image: ${{ env.IMAGE_URI }}
+          wait-for-service-stability: true
