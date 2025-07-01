@@ -1,20 +1,23 @@
-name: Build and Push to AWS ECR
+name: Build and Deploy to ECS
 
 on:
   push:
     branches: [master]
 
 env:
-  AWS_REGION: us-east-1                # ← Update to your region
+  AWS_REGION: us-east-1
   IMAGE_NAME: estore
   IMAGE_VERSION: 1.0.${{ github.run_number }}
-  ECR_REPOSITORY: estore               # ← Must already exist in ECR
+  ECR_REPOSITORY: estore
+  ECS_CLUSTER: fargate-cluster
+  ECS_SERVICE: ecr-estore-fargate-service
 
 jobs:
-  build-and-push:
+  build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Configure AWS credentials
@@ -28,19 +31,19 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push image to ECR
+      - name: Build, tag, and push Docker image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           IMAGE_URI=${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_VERSION}
-          LATEST_URI=${ECR_REGISTRY}/${ECR_REPOSITORY}:latest
-
           docker build -t $IMAGE_URI .
-          docker tag $IMAGE_URI $LATEST_URI
-
           docker push $IMAGE_URI
-          docker push $LATEST_URI
+          echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
 
-      - name: Output image URI
-        run: |
-          echo "Image pushed: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_VERSION }}"
+      - name: Deploy to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ecr-estore-fargate                
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          image: ${{ env.IMAGE_URI }}
