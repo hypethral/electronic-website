@@ -1,0 +1,38 @@
+{
+  "family": "ec2-task",
+  "networkMode": "bridged",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::899420339911:role/ecsTaskExecutionRole",
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  },
+  "containerDefinitions": [
+    {
+      "name": "estore",
+      "image": "Latest",
+      "cpu": 0,
+      "essential": true,
+      "portMappings": [
+        {
+          "name": "estore-5000-tcp",
+          "containerPort": 5000,
+          "hostPort": 80,
+          "protocol": "tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/ec2-task",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs",
+          "awslogs-create-group": "true"
+        }
+      }
+    }
+  ]
+}
