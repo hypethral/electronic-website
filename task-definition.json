@@ -1,7 +1,7 @@
 {
   "family": "ec2-task",
-  "networkMode": "bridged",
-  "requiresCompatibilities": ["FARGATE"],
+  "networkMode": "bridge",
+  "requiresCompatibilities": ["EC2"],
   "cpu": "1024",
   "memory": "512",
   "executionRoleArn": "arn:aws:iam::899420339911:role/ecsTaskExecutionRole",
