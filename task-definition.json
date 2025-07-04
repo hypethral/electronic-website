@@ -1,82 +1,38 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:us-east-1:899420339911:task-definition/ec2-task:1",
-    "containerDefinitions": [
+  "family": "ec2-task",
+  "networkMode": "bridged",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::899420339911:role/ecsTaskExecutionRole",
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  },
+  "containerDefinitions": [
+    {
+      "name": "estore",
+      "image": "Latest",
+      "cpu": 0,
+      "essential": true,
+      "portMappings": [
         {
-            "name": "estore",
-            "image": "899420339911.dkr.ecr.us-east-1.amazonaws.com/estore",
-            "cpu": 0,
-            "portMappings": [
-                {
-                    "name": "estore-5000-tcp",
-                    "containerPort": 5000,
-                    "hostPort": 80,
-                    "protocol": "tcp",
-                    "appProtocol": "http"
-                }
-            ],
-            "essential": true,
-            "environment": [],
-            "environmentFiles": [],
-            "mountPoints": [],
-            "volumesFrom": [],
-            "ulimits": [],
-            "logConfiguration": {
-                "logDriver": "awslogs",
-                "options": {
-                    "awslogs-group": "/ecs/ec2-task",
-                    "awslogs-create-group": "true",
-                    "awslogs-region": "us-east-1",
-                    "awslogs-stream-prefix": "ecs"
-                },
-                "secretOptions": []
-            },
-            "systemControls": []
+          "name": "estore-5000-tcp",
+          "containerPort": 5000,
+          "hostPort": 80,
+          "protocol": "tcp",
+          "appProtocol": "http"
         }
-    ],
-    "family": "ec2-task",
-    "executionRoleArn": "arn:aws:iam::899420339911:role/ecsTaskExecutionRole",
-    "networkMode": "bridge",
-    "revision": 1,
-    "volumes": [],
-    "status": "ACTIVE",
-    "requiresAttributes": [
-        {
-            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
-        },
-        {
-            "name": "ecs.capability.execution-role-awslogs"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.ecr-auth"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
-        },
-        {
-            "name": "ecs.capability.execution-role-ecr-pull"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/ec2-task",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs",
+          "awslogs-create-group": "true"
         }
-    ],
-    "placementConstraints": [],
-    "compatibilities": [
-        "EC2"
-    ],
-    "requiresCompatibilities": [
-        "EC2"
-    ],
-    "cpu": "1024",
-    "memory": "512",
-    "runtimePlatform": {
-        "cpuArchitecture": "X86_64",
-        "operatingSystemFamily": "LINUX"
-    },
-    "registeredAt": "2025-07-04T11:01:58.245Z",
-    "registeredBy": "arn:aws:iam::899420339911:root",
-    "enableFaultInjection": false,
-    "tags": []
+      }
+    }
+  ]
 }
