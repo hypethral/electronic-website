@@ -13,6 +13,8 @@ env:
   ECS_SERVICE: ec2-task-service-1dgt9kn8
   TASK_FAMILY: ec2-task
   CONTAINER_NAME: estore
+  TASK_DEFINITION: task-definition.json
+  IMAGE_TAG: latest
 
 jobs:
   build-and-deploy:
@@ -41,6 +43,9 @@ jobs:
           docker build -t $IMAGE_URI .
           docker push $IMAGE_URI
           echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
+          IMAGE_URI=${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_VERSION}
+          docker build -t $IMAGE_URI .
+          docker push $IMAGE_URI
 
       - name: Render new ECS task definition with new image
         id: render-task
